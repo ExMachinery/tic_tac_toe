@@ -8,10 +8,10 @@ class Game
       c: [0, 0, 0]
     }
     @game_score = {}
+    @cross_turn = true
     # some intialization here
   end
 
-
-
+  # Methods
 
 end
