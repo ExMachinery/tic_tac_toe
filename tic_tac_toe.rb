@@ -1,8 +1,15 @@
-#
+require_relative 'lib/game'
+require_relative 'lib/board'
+require_relative 'lib/player'
 
-puts "O | O | O"
-puts "X | X | X"
-puts "_ | _ | _"
+game = Game.new
+game.new_game
+
+
+
+# puts "O | O | O"
+# puts "X | X | X"
+# puts "_ | _ | _"
 
 # Ill store current results in hash
 # Need some logic to stop game when winning condition is met
