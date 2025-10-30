@@ -10,7 +10,6 @@ class Board
       b: ['_', '_', '_'],
       c: ['_', '_', '_']
     }
-
   end
 
   def render_board

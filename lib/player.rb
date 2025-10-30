@@ -1,5 +1,5 @@
 class Player
-  attr_accessor :nickname
+  attr_accessor :nickname, :symbol
   @@player_number = 0
     
   def initialize
@@ -8,7 +8,12 @@ class Player
     self.nickname = gets.chomp
   end
 
-  def nickname?
-    self.nickname
+  # def nickname?
+  #   self.nickname
+  # end
+
+  def assign_simbol(symb)
+    self.symbol = symb
   end
+
 end
