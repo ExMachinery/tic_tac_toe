@@ -10,12 +10,11 @@ class Board
       b: ['_', '_', '_'],
       c: ['_', '_', '_']
     }
-    # @board = []
-    @gameid = 0
+
   end
 
-  def render_board(hash)
-    hash.each do |k, v|
+  def render_board
+    self.gamehash.each do |k, v|
       row = ""
       v.each do |position|
         row += " #{position} |"
@@ -24,8 +23,52 @@ class Board
     end
   end
 
-  def winning_condition
-    #Here i need a logic to check for winning condition
+  def row_check(hash)
+    winner = false
+    hash.each do |k,v|
+      if v.include?("X") or v.include?("O")
+        v.each_cons(3) do |s1, s2, s3|
+          if s1 == s2 and s2 == s3
+            winner = true
+            break
+          end
+        end
+      end
+    end
+    winner
+  end
+
+  def winning_condition(hash)
+    winner = row_check(hash)
+    if winner == false
+      vertical = Hash.new { |h,k| h[k] = [] }
+      diagonal = Hash.new { |h,k| h[k] = [] }
+      row = 0
+      hash.each do |k, v|
+        row += 1
+        v.each_cons(3) do |symb1, symb2, symb3|
+          vertical[:a] << symb1
+          vertical[:b] << symb2
+          vertical[:c] << symb3
+          case row
+          when 1
+            diagonal[:a] << symb1
+            diagonal[:b] << symb3
+          when 2
+            diagonal[:a] << symb2
+            diagonal[:b] << symb2
+          when 3
+            diagonal[:a] << symb3
+            diagonal[:b] << symb1
+          end
+        end
+      end
+      winner = row_check(vertical)
+      if winner == false
+        winner = row_check(diagonal)
+      end
+    end
+  winner
   end
 
   def engine(t, symb)
@@ -42,19 +85,11 @@ class Board
       end
     end
     self.gamehash = proxy_hash
-    render_board(self.gamehash)
-    # Check .winning_condition if false, go next turn. If true 
-    # Надо метод расчета отделить, чтобы вызывать его каждый раз, когда надо изменить борд
-    # Каждую t надо сохранять в array, чтобы передавать его Game. Сверяясь с ней, он будет понимать, свободны ли эти ячейки. 
-    # Метод Engine может возвращать результат и Game буддет понимать, что надо продолжать играть. Тогда избавимся от уродливого
-    # @gameid и get_turn отсюда.
-  end
-
-  def start(id)
-    @gameid = id
-    puts "Now playing: #{self.player1} vs. #{self.player2}"
-    render_board(self.gamehash)
-    @gameid.get_turn
+    render_board
+    result = winning_condition(self.gamehash)
+    result
   end
 end
 
+# Draw condition
+# Отправлять массив, который будет проверять на занятые поля.
