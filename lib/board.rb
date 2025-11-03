@@ -83,7 +83,7 @@ class Board
         winner = row_check(diagonal)
       end
     end
-    if winner == false && @current_turn == 10
+    if winner == false && @current_turn == 9
       winner = nil
     end
   winner
