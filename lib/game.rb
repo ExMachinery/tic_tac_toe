@@ -44,15 +44,13 @@ class Game
         if s1 == "X"
           self.p1.assign_symbol("O")
           self.p2.assign_symbol("X")
-        elsif s1 == "O"
+        else
           self.p1.assign_symbol("X")
           self.p2.assign_symbol("O")
         end
-        valid = true
         return true
       elsif decision == "n"
         puts "Have a nice day!"
-        valid = true
         return false
       else 
         puts "Incorrect input! You have to choose between 'Y' or 'n'. Try again!"

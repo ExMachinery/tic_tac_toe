@@ -90,7 +90,9 @@ class Board
   end
 
   def validate_turn(turn)
-    unless @filled.include?(turn)
+    if @filled.include?(turn)
+      false
+    else
       true
     end
   end
