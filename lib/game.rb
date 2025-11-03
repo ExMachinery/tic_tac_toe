@@ -31,7 +31,7 @@ class Game
           valid = true
         end
       else
-        puts "Wrong input. Choose number form 1 to 9"
+        puts "Incorrect input. Choose a number form 1 to 9"
       end 
     end
     
@@ -46,13 +46,40 @@ class Game
     end
     result
   end
-  
-  def new_game
-    puts "Now playing: #{self.p1.nickname} (X) vs. #{self.p2.nickname} (O)"
-    self.p1.assign_simbol("X")
-    self.p2.assign_simbol("O")
-    @game_score[self.p1.nickname] = 0
-    @game_score[self.p2.nickname] = 0
+
+  def replay
+    puts 'Another game? (Y/n)'
+    valid = false
+    until valid do
+      decision = gets.chomp
+      if decision == "Y"
+        @winner = false
+        @filled_positions = []
+        s1 = self.p1.symbol
+        if s1 == "X"
+          self.p1.assign_symbol("O")
+          self.p2.assign_symbol("X")
+          @player_turn = self.p2
+        elsif s1 == "O"
+          self.p1.assign_symbol("X")
+          self.p2.assign_symbol("O")
+          @player_turn = self.p1
+        end
+        valid = true
+        return true
+      elsif decision == "n"
+        puts "Have a nice day!"
+        valid = true
+        return false
+      else 
+        puts "Incorrect input! You have to choose between 'Y' or 'n'. Try again!"
+      end
+    end
+  end
+
+  def new_round
+    self.round = Board.new("#{self.p1.nickname}", "#{self.p2.nickname}")
+    puts "Now playing: #{self.p1.nickname} (#{self.p1.symbol}) vs. #{self.p2.nickname} (#{self.p2.symbol})"
     self.round.render_board
     turn_counter = 0
     while @winner == false do
@@ -73,6 +100,19 @@ class Game
         @game_score[self.p2.nickname] += 1
       end
       current_score
+    end
+
+  end
+  
+  def new_game
+    self.p1.assign_symbol("X")
+    self.p2.assign_symbol("O")
+    @game_score[self.p1.nickname] = 0
+    @game_score[self.p2.nickname] = 0
+    one_more = true
+    while one_more == true do
+      new_round
+      one_more = replay
     end
   end
 end

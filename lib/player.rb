@@ -12,7 +12,7 @@ class Player
   #   self.nickname
   # end
 
-  def assign_simbol(symb)
+  def assign_symbol(symb)
     self.symbol = symb
   end
 
