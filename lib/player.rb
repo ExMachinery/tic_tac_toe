@@ -8,12 +8,7 @@ class Player
     self.nickname = gets.chomp
   end
 
-  # def nickname?
-  #   self.nickname
-  # end
-
   def assign_symbol(symb)
     self.symbol = symb
   end
-
 end

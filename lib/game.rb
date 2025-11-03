@@ -9,9 +9,6 @@ class Game
     self.p2 = Player.new
     @game_score = {}
     @winner = false
-    @filled_positions = []
-    @player_turn = self.p1
-    self.round = Board.new("#{self.p1.nickname}", "#{self.p2.nickname}")
   end
 
   def current_score
@@ -19,32 +16,21 @@ class Game
   end
   
   def get_turn
-    puts "#{@player_turn.nickname}, make your move. Choosa a position number from 1 to 9:"
+    puts "#{self.round.whos_turn?.nickname}, make your move. Choose a position number from 1 to 9:"
     valid = false
     turn = 0
     until valid do
       turn = gets.chomp.to_i
       if turn >= 1 and turn <= 9
-        if @filled_positions.include?(turn)
-          puts "This position already filled. Try another one!"
-        else
-          valid = true
-        end
+        valid = self.round.validate_turn(turn)
+          if valid == false
+            puts "Position is filled. Try another one!"
+          end
       else
-        puts "Incorrect input. Choose a number form 1 to 9"
-      end 
-    end
-    
-    @filled_positions << turn
-    result = self.round.engine(turn, @player_turn.symbol)
-    if result == false
-      if @player_turn == self.p1
-        @player_turn = self.p2
-      else
-        @player_turn = self.p1
+        puts "Incorrect input! Choose a position number from 1 to 9:"
       end
     end
-    result
+    turn
   end
 
   def replay
@@ -54,16 +40,13 @@ class Game
       decision = gets.chomp
       if decision == "Y"
         @winner = false
-        @filled_positions = []
         s1 = self.p1.symbol
         if s1 == "X"
           self.p1.assign_symbol("O")
           self.p2.assign_symbol("X")
-          @player_turn = self.p2
         elsif s1 == "O"
           self.p1.assign_symbol("X")
           self.p2.assign_symbol("O")
-          @player_turn = self.p1
         end
         valid = true
         return true
@@ -78,23 +61,22 @@ class Game
   end
 
   def new_round
-    self.round = Board.new("#{self.p1.nickname}", "#{self.p2.nickname}")
-    puts "Now playing: #{self.p1.nickname} (#{self.p1.symbol}) vs. #{self.p2.nickname} (#{self.p2.symbol})"
+    if self.p1.symbol == "X"
+      self.round = Board.new(self.p1, self.p2)
+    else
+      self.round = Board.new(self.p2, self.p1)
+    end
+
+    puts "Now playing: #{self.round.player1.nickname} (#{self.round.player1.symbol}) vs. #{self.round.player2.nickname} (#{self.round.player2.symbol})"
     self.round.render_board
-    turn_counter = 0
     while @winner == false do
-      if turn_counter == 9
-        puts 'DRAW!!!!'
-        current_score
-        break
-      end
-      @winner = self.get_turn
-      turn_counter += 1
+      turn = get_turn
+      @winner = self.round.engine(turn)
     end
     
     if @winner == true
-      puts "#{@player_turn.nickname}, you are a winner!"
-      if @player_turn == self.p1
+      puts "#{self.round.whos_win?.nickname}, you are a winner!"
+      if self.round.whos_win? == self.p1
         @game_score[self.p1.nickname] += 1
       else
         @game_score[self.p2.nickname] += 1
@@ -102,6 +84,9 @@ class Game
       current_score
     end
 
+    if @winner == nil
+      puts "DRAW!!!"
+    end
   end
   
   def new_game

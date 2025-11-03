@@ -1,15 +1,31 @@
 require_relative 'game'
+require_relative 'player'
 
 class Board
   attr_accessor :player1, :player2, :gamehash
-  def initialize(p1nick, p2nick)
-    self.player1 = p1nick
-    self.player2 = p2nick
+  def initialize(p1, p2)
+    self.player1 = p1
+    self.player2 = p2
     self.gamehash = {
       a: ['_', '_', '_'],
       b: ['_', '_', '_'],
       c: ['_', '_', '_']
     }
+    @filled = []
+    @current_turn = 1
+    @winner = nil
+  end
+
+  def whos_turn?
+    if @current_turn.odd?
+      self.player1
+    else
+      self.player2
+    end
+  end
+
+  def whos_win?
+    @winner
   end
 
   def render_board
@@ -67,17 +83,26 @@ class Board
         winner = row_check(diagonal)
       end
     end
+    if winner == false && @current_turn == 10
+      winner = nil
+    end
   winner
   end
 
-  def engine(t, symb)
+  def validate_turn(turn)
+    unless @filled.include?(turn)
+      true
+    end
+  end
+
+  def engine(t)
     i = 0
     proxy_hash = Hash.new { |h,k| h[k] = []}
     self.gamehash.each do |k, v|
       v.each_with_index do |position, index|
         i += 1
         if i == t
-          proxy_hash[k] << symb
+          proxy_hash[k] << whos_turn?.symbol
         else
           proxy_hash[k] << position
         end
@@ -86,9 +111,11 @@ class Board
     self.gamehash = proxy_hash
     render_board
     result = winning_condition(self.gamehash)
+    if result == true
+      @winner = whos_turn?
+    end
+    @current_turn += 1
+    @filled << t
     result
   end
 end
-
-# Draw condition
-# Отправлять массив, который будет проверять на занятые поля.
