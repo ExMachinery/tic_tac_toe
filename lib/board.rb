@@ -101,7 +101,7 @@ class Board
     i = 0
     proxy_hash = Hash.new { |h,k| h[k] = []}
     self.gamehash.each do |k, v|
-      v.each_with_index do |position, index|
+      v.each do |position|
         i += 1
         if i == t
           proxy_hash[k] << whos_turn?.symbol
